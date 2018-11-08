@@ -1,0 +1,76 @@
+version: '3.1'
+services:
+  # The nginx Web Server
+  web:
+    env_file:
+      - .env
+    build:
+      context: ./
+      dockerfile: docker/web.dockerfile
+    working_dir: /var/www
+    ports:
+      - 8080:80
+    volumes:
+      - ./:/var/www:cached
+      - ./docker/configs/nginx/nginx.conf:/etc/nginx/nginx.conf:cached
+      - ./docker/configs/nginx/vhost.conf:/etc/nginx/conf.d/default.conf:cached
+    depends_on:
+      - "app"
+      - "database"
+    networks:
+      - default_net
+
+  # The PHP Application
+  app:
+    env_file:
+        - .env
+    build:
+      context: ./
+      dockerfile: docker/app.dockerfile
+    working_dir: /var/www
+    ports:
+    - 6002:6001
+    environment:
+      # dev database
+      DB_HOST: database
+      DB_PORT: 3306
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    volumes:
+      - ./:/var/www:cached
+      - ./docker/configs/php/php.ini:/usr/local/etc/php/conf.d/php.ini:cached
+    depends_on:
+      - "database"
+    networks:
+      - default_net
+
+  # The Database
+  database:
+    env_file:
+      - .env
+    image: mariadb:latest
+    environment:
+      MYSQL_DATABASE: laravelqa
+      MYSQL_USER: laravelqa
+      MYSQL_PASSWORD: laravelqa
+      MYSQL_ROOT_PASSWORD: laravelqa
+    volumes:
+      - ./docker/configs/mariadb/my.cnf:/etc/mysql/my.cnf
+    ports:
+      - 3306:3306
+    networks:
+      - default_net
+
+  # Redis
+  redis:
+    env_file:
+      - .env
+    image: redis
+    ports:
+      - 6379:6379
+    networks:
+      - default_net
+
+networks:
+  default_net:
+    driver: bridge
