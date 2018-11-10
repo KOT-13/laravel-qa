@@ -74,8 +74,8 @@ class QuestionsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Question  $question
+     * @param AskQuestionRequest $request
+     * @param  \App\Question $question
      * @return \Illuminate\Http\Response
      */
     public function update(AskQuestionRequest $request, Question $question)
@@ -88,11 +88,14 @@ class QuestionsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Question  $question
+     * @param  \App\Question $question
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function destroy(Question $question)
     {
-        //
+        $question->delete();
+
+        return redirect()->route('questions.index')->with('success', 'Your question was successfully deleted!');
     }
 }
