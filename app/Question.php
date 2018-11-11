@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Question
@@ -54,7 +55,7 @@ class Question extends Model
      */
     public function getStatusAttribute()
     {
-        if ($this->answers > 0) {
+        if ($this->answers_count > 0) {
             if ($this->best_answer_id) {
                 return "answered-accepted";
             }
@@ -69,5 +70,13 @@ class Question extends Model
     public function getBodyHtmlAttribute(): string
     {
         return \Parsedown::instance()->text($this->body);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function answers(): HasMany
+    {
+        return $this->hasMany(Answer::class);
     }
 }

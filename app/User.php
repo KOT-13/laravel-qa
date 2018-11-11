@@ -7,6 +7,10 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+/**
+ * Class User
+ * @package App
+ */
 class User extends Authenticatable
 {
     use Notifiable;
@@ -41,5 +45,13 @@ class User extends Authenticatable
     {
  //       return route('users.show', $this->id);
         return '#';
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function answers(): HasMany
+    {
+        return $this->hasMany(Answer::class);
     }
 }
