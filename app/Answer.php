@@ -77,7 +77,7 @@ class Answer extends Model
     /**
      * @return bool
      */
-    public function isBest()
+    public function isBest(): bool
     {
         return $this->id === $this->question->best_answer_id;
     }
