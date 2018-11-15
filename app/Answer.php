@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  */
 class Answer extends Model
 {
+    use VotableTrait;
     protected $fillable = ['body', 'user_id'];
 
     /**
@@ -81,29 +82,5 @@ class Answer extends Model
     public function isBest(): bool
     {
         return $this->id === $this->question->best_answer_id;
-    }
-
-    /**
-     * @return MorphToMany
-     */
-    public function votes(): MorphToMany
-    {
-        return $this->morphToMany(User::class, 'votable');
-    }
-
-    /**
-     * @return MorphToMany
-     */
-    public function upVotes(): MorphToMany
-    {
-        return $this->votes()->wherePivot('vote', 1);
-    }
-
-    /**
-     * @return MorphToMany
-     */
-    public function downVotes(): MorphToMany
-    {
-        return $this->votes()->wherePivot('vote', -1);
     }
 }

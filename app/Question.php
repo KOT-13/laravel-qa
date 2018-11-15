@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  */
 class Question extends Model
 {
+    use VotableTrait;
     protected $fillable = [
         'title',
         'body',
@@ -121,29 +122,5 @@ class Question extends Model
     public function getFavoritesCountAttribute()
     {
         return $this->favorites->count();
-    }
-
-    /**
-     * @return MorphToMany
-     */
-    public function votes(): MorphToMany
-    {
-        return $this->morphToMany(User::class, 'votable');
-    }
-
-    /**
-     * @return MorphToMany
-     */
-    public function upVotes(): MorphToMany
-    {
-        return $this->votes()->wherePivot('vote', 1);
-    }
-
-    /**
-     * @return MorphToMany
-     */
-    public function downVotes(): MorphToMany
-    {
-        return $this->votes()->wherePivot('vote', -1);
     }
 }
