@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * Class Answer
@@ -80,5 +81,13 @@ class Answer extends Model
     public function isBest(): bool
     {
         return $this->id === $this->question->best_answer_id;
+    }
+
+    /**
+     * @return MorphToMany
+     */
+    public function votes(): MorphToMany
+    {
+        return $this->morphToMany(User::class, 'votable');
     }
 }

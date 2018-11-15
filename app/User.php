@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -73,5 +74,43 @@ class User extends Authenticatable
     public function favorites(): BelongsToMany
     {
         return $this->belongsToMany(Question::class, 'favorites')->withTimestamps();
+    }
+
+    /**
+     * @return MorphToMany
+     */
+    public function voteQuestions(): MorphToMany
+    {
+        return $this->morphedByMany(Question::class, 'votable');
+    }
+
+    /**
+     * @return MorphToMany
+     */
+    public function voteAnswers(): MorphToMany
+    {
+        return $this->morphedByMany(Answer::class, 'votable');
+    }
+
+    /**
+     * @param Question $question
+     * @param $vote
+     */
+    public function voteQuestion(Question $question, $vote): void
+    {
+        $voteQuestions = $this->voteQuestions();
+        if ($voteQuestions->where('votable_id', $question->id)->exists()) {
+            $voteQuestions->updateExistingPivot($question, ['vote' => $vote]);
+        }
+        else {
+            $voteQuestions->attach($question, ['vote' => $vote]);
+        }
+
+        $question->load('votes');
+        $downVotes = (int) $question->downVotes()->sum('vote');
+        $upVotes = (int) $question->upVotes()->sum('vote');
+
+        $question->votes_count = $upVotes + $downVotes;
+        $question->save();
     }
 }

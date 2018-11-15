@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * Class Question
@@ -120,5 +121,29 @@ class Question extends Model
     public function getFavoritesCountAttribute()
     {
         return $this->favorites->count();
+    }
+
+    /**
+     * @return MorphToMany
+     */
+    public function votes(): MorphToMany
+    {
+        return $this->morphToMany(User::class, 'votable');
+    }
+
+    /**
+     * @return MorphToMany
+     */
+    public function upVotes(): MorphToMany
+    {
+        return $this->votes()->wherePivot('vote', 1);
+    }
+
+    /**
+     * @return MorphToMany
+     */
+    public function downVotes(): MorphToMany
+    {
+        return $this->votes()->wherePivot('vote', -1);
     }
 }
