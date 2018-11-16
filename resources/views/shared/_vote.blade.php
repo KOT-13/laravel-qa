@@ -11,7 +11,7 @@
 @endif
 
 @php
-    $formId = $name . "-" . $model->id
+    $formId = $name . "-" . $model->id;
     $formAction = "/{$firstURISegment}/{$model->id}/vote";
 @endphp
 
