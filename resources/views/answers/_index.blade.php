@@ -36,25 +36,7 @@
                                 <input type="hidden" name="vote" value="-1">
                             </form>
 
-                            @can('accept', $answer)
-                                <a href="" title="Mark as best answer"
-                                   class="{{ $answer->status }} mt-2"
-                                onclick="event.preventDefault(); document.getElementById('accept-answer-{{ $answer->id }}').submit();"
-                                >
-                                    <i class="fas fa-check fa-2x"></i>
-                                </a>
-                                <form action="{{ route('answers.accept', $answer->id) }}" id="accept-answer-{{ $answer->id }}" method="post" style="display: none;">
-                                    @csrf
-                                </form>
-                                @else
-                                    @if($answer->is_best)
-                                        <a href="" title="The question owner accepted as best answer"
-                                           class="{{ $answer->status }} mt-2"
-                                        >
-                                            <i class="fas fa-check fa-2x"></i>
-                                        </a>
-                                    @endif
-                            @endcan
+
                         </div>
                         <div class="media-body">
                             {!! $answer->body_html !!}
@@ -78,15 +60,10 @@
 
                                 </div>
                                 <div class="col-4">
-                                    <span class="text-muted">Answered {{ $answer->created_date }}</span>
-                                    <div class="media mt-2">
-                                        <a href="{{ $answer->user->url }}" class="pr-2">
-                                            <img src="{{ $answer->user->avatar }}">
-                                        </a>
-                                        <div class="media-body mt-1">
-                                            <a href="{{ $answer->user->url }}">{{ $answer->user->name }}</a>
-                                        </div>
-                                    </div>
+                                    @include('shared._author', [
+                                        'model' => $answer,
+                                        'label' => 'answered'
+                                    ])
                                 </div>
                             </div>
                         </div>
