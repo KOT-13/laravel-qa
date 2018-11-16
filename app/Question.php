@@ -72,7 +72,7 @@ class Question extends Model
      */
     public function getBodyHtmlAttribute(): string
     {
-        return clean($this->bodyHtml());
+        return $this->bodyHtml();
     }
 
     /**
@@ -80,7 +80,7 @@ class Question extends Model
      */
     public function answers(): HasMany
     {
-        return $this->hasMany(Answer::class);
+        return $this->hasMany(Answer::class)->orderBy('votes_count', 'desc');
     }
 
     /**
@@ -127,7 +127,7 @@ class Question extends Model
     /**
      * @return string
      */
-    public function getExceprtAttribute(): string
+    public function getExcerptAttribute(): string
     {
         return str_limit(strip_tags($this->bodyHtml()), 250);
     }
@@ -137,6 +137,6 @@ class Question extends Model
      */
     private function bodyHtml(): string
     {
-        return \Parsedown::instance()->text($this->body);
+        return clean(\Parsedown::instance()->text($this->body));
     }
 }
